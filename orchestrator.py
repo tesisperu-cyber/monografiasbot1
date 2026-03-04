@@ -13,7 +13,8 @@ from agents.introduccion   import AgenteIntroduccion
 from agents.desarrollo     import AgenteDesarrollo
 from agents.conclusiones   import AgenteConclusiones
 from agents.referencias    import AgenteReferencias
-from research.buscador     import BuscadorAcademico
+from research.buscador          import BuscadorAcademico
+from research.webs_especializadas import BuscadorEspecializado
 from utils.formatter       import formatear_monografia
 from utils.docx_generator  import generar_docx
 from utils.config          import MODEL, MAX_TOKENS_PER_SECTION
@@ -25,7 +26,8 @@ class Orchestrator:
 
     def __init__(self, api_key: str):
         self.client = Groq(api_key=api_key)
-        self.buscador = BuscadorAcademico()
+        self.buscador            = BuscadorAcademico()
+        self.buscador_especializado = BuscadorEspecializado()
 
         # Sub-agentes
         self.agente_intro       = AgenteIntroduccion(self.client)
@@ -72,10 +74,18 @@ class Orchestrator:
         resultado = {}
 
         # ── FASE 1: Búsqueda académica ─────────────────────────────────────────
-        if callback: callback("🔍 Buscando fuentes académicas en bases de datos...")
-        fuentes = self.buscador.buscar(tema, max_resultados=30)
+        if callback: callback("🔍 Buscando fuentes en bases de datos académicas...")
+        fuentes = self.buscador.buscar(tema, max_resultados=50)
+        if callback: callback(f"   ✓ {len(fuentes)} fuentes en bases de datos")
+
+        # ── FASE 1b: Webs especializadas por área ──────────────────────────────
+        if callback: callback(f"🌐 Buscando en webs especializadas ({especialidad})...")
+        fuentes_web = self.buscador_especializado.buscar(tema, especialidad, tema_extra=tema, max_por_web=3)
+        fuentes = fuentes + fuentes_web
+        if callback: callback(f"   ✓ {len(fuentes_web)} resultados de webs especializadas")
+        if callback: callback(f"   📚 Total fuentes: {len(fuentes)}")
+
         contexto['fuentes'] = fuentes
-        if callback: callback(f"   ✓ {len(fuentes)} fuentes encontradas")
 
         # ── FASE 2: Introducción ───────────────────────────────────────────────
         if callback: callback("📝 Agente Introducción redactando...")

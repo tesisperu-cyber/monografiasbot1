@@ -32,12 +32,29 @@ class AgenteBase:
         """Convierte lista de fuentes en texto resumido para el prompt."""
         if not fuentes:
             return "No se encontraron fuentes externas."
+
+        # Separar fuentes Wikipedia (contenido) de fuentes académicas (referencias)
+        wiki_fuentes    = [f for f in fuentes if f.get('es_wikipedia')]
+        otras_fuentes   = [f for f in fuentes if not f.get('es_wikipedia')]
+
         lines = []
-        for i, f in enumerate(fuentes[:max_fuentes], 1):
+
+        # Primero el contenido de Wikipedia como contexto
+        if wiki_fuentes:
+            lines.append("=== CONTENIDO DE WIKIPEDIA (usar como contexto, NO citar directamente) ===")
+            for f in wiki_fuentes[:3]:
+                titulo   = f.get('titulo', '')
+                contenido = f.get('contenido_completo', f.get('resumen', ''))
+                lines.append(f"\n{titulo}:\n{contenido}")
+            lines.append("\n=== FUENTES ACADÉMICAS CITABLES ===")
+
+        # Luego las fuentes académicas
+        for i, f in enumerate(otras_fuentes[:max_fuentes], 1):
             titulo  = f.get('titulo', 'Sin título')
             autores = f.get('autores', 'Autor desconocido')
             anio    = f.get('anio', 's.f.')
             fuente  = f.get('fuente', '')
             resumen = f.get('resumen', '')[:200]
             lines.append(f"{i}. {autores} ({anio}). {titulo}. [{fuente}] {resumen}")
+
         return "\n".join(lines)
