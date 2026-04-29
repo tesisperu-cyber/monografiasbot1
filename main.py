@@ -4,17 +4,17 @@ MonografiasBot1 — Interfaz principal de usuario
 Ejecutar: python main.py
 """
 
-import os
-import sys
-from datetime import date
-from orchestrator import Orchestrator
+#import os
+#import sys
+#from datetime import date
+#from orchestrator import Orchestrator
 
 
-def limpiar_pantalla():
+#def limpiar_pantalla():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def banner():
+#def banner():
     print("""
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
