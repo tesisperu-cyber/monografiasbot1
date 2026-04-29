@@ -52,12 +52,12 @@ for k, v in [("resultado", None), ("generando", False)]:
         st.session_state[k] = v
 
 # ── Formulario ────────────────────────────────────────────────────────────────
-with st.form("formulario"):
+#with st.form("formulario"):
 
-    st.markdown("### 🔑 API Key de Groq")
-    st.caption("Obtén tu clave gratis en [groq.com](https://console.groq.com)")
-    api_key = st.text_input("", type="password", placeholder="gsk_...",
-                            label_visibility="collapsed")
+    #st.markdown("### 🔑 API Key de Groq")
+    #st.caption("Obtén tu clave gratis en [groq.com](https://console.groq.com)")
+    #api_key = st.text_input("", type="password", placeholder="gsk_...",
+                            #label_visibility="collapsed")
 
     st.markdown("---")
     st.markdown("### 📝 Datos de la Monografía")
